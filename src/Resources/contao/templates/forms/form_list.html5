@@ -1,0 +1,20 @@
+<?php if ($this->forms): ?>
+<div class="tl_listing_container list_view">
+
+    <table class="tl_listing">
+        <tbody>
+        <!--
+        <tr>
+            <td colspan="2" class="tl_folder_tlist">Formulare</td>
+        </tr>
+        -->
+        <?php foreach ($this->forms as $form): ?>
+        <tr class="even click2edit" onmouseover="Theme.hoverRow(this,1)" onmouseout="Theme.hoverRow(this,0)" onclick="Theme.toggleSelect(this)">
+            <td class="tl_file_list"><?php echo $form['name']; ?></td>
+            <td class="tl_file_list tl_right_nowrap"><a href="contao/main.php?do=<?php echo $form['alias']; ?>" title="" class="show"><img src="system/themes/flexible/images/show.gif" width="14" height="16" alt="Formulardaten anzeigen"></a></td>
+        </tr>
+        <?php endforeach; ?>
+        </tbody></table>
+
+</div>
+<?php endif; ?>

@@ -1,0 +1,56 @@
+{
+    "name": "menatwork/contao-efg-bundle",
+    "description": "Contao Extended Form Generator",
+    "keywords": [ "export", "excel", "formdata" ],
+    "type": "contao-bundle",
+    "homepage": "http://www.aurealis.de",
+    "license": "LGPL-3.0-or-later",
+    "authors": [
+        {
+            "name": "Thomas Kuhn",
+            "homepage": "https://bitbucket.org/thk/efg",
+            "role": "Developer"
+        },
+        {
+            "name": "Michael Bischof",
+            "email": "mb@hinderlingvolkart.com",
+            "homepage": "http://www.hinderlingvolkart.com",
+            "role": "Developer"
+        },
+        {
+            "name": "Andreas Dziemba",
+            "email": "dziemba@men-at-work.de",
+            "homepage": "http://www.men-at-work.de",
+            "role": "Developer"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/menatwork/contao-efg-bundle/issues"
+    },
+    "require": {
+        "php": "^7.0",
+        "contao/core-bundle": "^4.4",
+        "phpoffice/phpspreadsheet": "^1.2"
+    },
+    "autoload":{
+        "psr-4": {
+            "MenAtWork\\EfgBundle\\": "src"
+      },
+        "classmap": [
+            "src/Contao/"
+        ],
+        "exclude-from-classmap": [
+            "src/Resources/contao/config/",
+            "src/Resources/contao/dca/",
+            "src/Resources/contao/languages/",
+            "src/Resources/contao/templates/"
+        ]
+    },
+    "replace":{
+        "contao-legacy/efg": "*",
+        "byteworks/efg":"*"
+    },
+    "extra": {
+        "contao-manager-plugin": "MenAtWork\\EfgBundle\\ContaoManager\\Plugin"
+    }
+}
