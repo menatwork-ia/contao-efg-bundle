@@ -18,7 +18,7 @@
 */
 if (TL_MODE == 'BE')
 {
-	$GLOBALS['TL_CSS'][] = 'bundle/efg/w50_fix.css';
+	$GLOBALS['TL_CSS'][] = 'bundles/efg/w50_fix.css';
 }
 
 
