@@ -431,7 +431,7 @@ class DC_Formdata extends \DataContainer implements \listable, \editable
 		}
 
 		// Store the current referer
-		if (!empty($this->ctable) && !\Input::get('act') && !\Input::get('key') && !\Input::get('token') && \Environment::get('script') == 'contao/main.php' && !\Environment::get('isAjaxRequest'))
+		if (!empty($this->ctable) && !\Input::get('act') && !\Input::get('key') && !\Input::get('token') && \Environment::get('script') == 'contao' && !\Environment::get('isAjaxRequest'))
 		{
 			$session = $objSession->get('referer');
 			$session[TL_REFERER_ID][$this->strTable] = substr(\Environment::get('requestUri'), strlen(TL_PATH) + 1);
@@ -939,7 +939,7 @@ class DC_Formdata extends \DataContainer implements \listable, \editable
 		if ($GLOBALS['TL_DCA'][$this->strTable]['config']['notDeletable'])
 		{
 			$this->logger('Table "'.$this->strTable.'" is not deletable', __METHOD__, TL_ERROR);
-			\Controller::redirect('contao/main.php?act=error');
+			\Controller::redirect('contao?act=error');
 		}
 
 		if (!$this->intId)
@@ -1065,7 +1065,7 @@ class DC_Formdata extends \DataContainer implements \listable, \editable
 		if ($GLOBALS['TL_DCA'][$this->strTable]['config']['notDeletable'])
 		{
 			$this->logger('Table "'.$this->strTable.'" is not deletable', __METHOD__, TL_ERROR);
-			\Controller::redirect('contao/main.php?act=error');
+			\Controller::redirect('contao?act=error');
 		}
 
 		$session = $this->Session->getData();
@@ -1206,7 +1206,7 @@ class DC_Formdata extends \DataContainer implements \listable, \editable
 		if ($GLOBALS['TL_DCA'][$this->strTable]['config']['notEditable'])
 		{
 			$this->logger('Table "' . $this->strTable . '" is not editable', __METHOD__, TL_ERROR);
-			\Controller::redirect('contao/main.php?act=error');
+			\Controller::redirect('contao?act=error');
 		}
 
 		if ($intID != '')
@@ -1235,7 +1235,7 @@ class DC_Formdata extends \DataContainer implements \listable, \editable
 		if ($objRow->numRows < 1)
 		{
 			$this->logger('Could not load record "'.$this->strTable.'.id='.$this->intId.'"', __METHOD__, TL_ERROR);
-			\Controller::redirect('contao/main.php?act=error');
+			\Controller::redirect('contao?act=error');
 		}
 
 		$this->objActiveRecord = $objRow;
@@ -1908,7 +1908,7 @@ class DC_Formdata extends \DataContainer implements \listable, \editable
 		if ($GLOBALS['TL_DCA'][$this->strTable]['config']['notEditable'])
 		{
 			$this->logger('Table "' . $this->strTable . '" is not editable', __METHOD__, TL_ERROR);
-			\Controller::redirect('contao/main.php?act=error');
+			\Controller::redirect('contao?act=error');
 		}
 
 		$return = '';
@@ -3200,7 +3200,7 @@ class DC_Formdata extends \DataContainer implements \listable, \editable
 
 <div id="'.$this->bid.'">'.((\Input::get('act') == 'select' || $this->ptable) ? '
 <a href="'.$this->getReferer(true, $this->ptable).'" class="header_back" title="'.specialchars($GLOBALS['TL_LANG']['MSC']['backBTTitle']).'" accesskey="b" onclick="Backend.getScrollOffset()">'.$GLOBALS['TL_LANG']['MSC']['backBT'].'</a> ' : (isset($GLOBALS['TL_DCA'][$this->strTable]['config']['backlink']) ? '
-<a href="contao/main.php?'.$GLOBALS['TL_DCA'][$this->strTable]['config']['backlink'].'" class="header_back" title="'.specialchars($GLOBALS['TL_LANG']['MSC']['backBTTitle']).'" accesskey="b" onclick="Backend.getScrollOffset()">'.$GLOBALS['TL_LANG']['MSC']['backBT'].'</a> ' : '')) . ((\Input::get('act') != 'select') ? '
+<a href="contao?'.$GLOBALS['TL_DCA'][$this->strTable]['config']['backlink'].'" class="header_back" title="'.specialchars($GLOBALS['TL_LANG']['MSC']['backBTTitle']).'" accesskey="b" onclick="Backend.getScrollOffset()">'.$GLOBALS['TL_LANG']['MSC']['backBT'].'</a> ' : '')) . ((\Input::get('act') != 'select') ? '
 '.(!$GLOBALS['TL_DCA'][$this->strTable]['config']['closed'] ? '<a href="'.(($this->ptable != '') ? \Backend::addToUrl('act=create' . (($GLOBALS['TL_DCA'][$this->strTable]['list']['sorting']['mode'] < 4) ? '&amp;mode=2' : '') . '&amp;pid=' . $this->intId) : \Backend::addToUrl('act=create')).'" class="header_new" title="'.specialchars($GLOBALS['TL_LANG'][$this->strTable]['new'][1]).'" accesskey="n" onclick="Backend.getScrollOffset()">'.$GLOBALS['TL_LANG'][$this->strTable]['new'][0].'</a> ' : '') . $this->generateGlobalButtons() : '') . '
 </div>' . \Message::generate(true);
 		}
@@ -4723,7 +4723,7 @@ class DC_Formdata extends \DataContainer implements \listable, \editable
 		if ($objRow->numRows < 1)
 		{
 			$this->logger('Could not load record "'.$this->strTable.'.id='.$this->intId.'"', __METHOD__, TL_ERROR);
-			\Controller::redirect('contao/main.php?act=error');
+			\Controller::redirect('contao?act=error');
 		}
 
 		$arrSubmitted = $objRow->fetchAssoc();
@@ -4759,7 +4759,7 @@ class DC_Formdata extends \DataContainer implements \listable, \editable
 		if ($objForm == null)
 		{
 			$this->logger('Could not load record "tl_form.id='.$intFormId.'" / "tl_form.title='.$arrSubmitted['form'].'"', __METHOD__, TL_ERROR);
-			\Controller::redirect('contao/main.php?act=error');
+			\Controller::redirect('contao?act=error');
 		}
 
 		$arrForm = $objForm->row();
@@ -6440,7 +6440,7 @@ function handleEfgFileselectorButton(){
 				alert('Could not find the SimpleModal frame');
 				return;
 			}
-			if (frm.document.location.href.indexOf('contao/main.php') != -1) {
+			if (frm.document.location.href.indexOf('contao') != -1) {
 				alert(Contao.lang.picker);
 				return; // see #5704
 			}
