@@ -270,7 +270,13 @@ $GLOBALS['TL_DCA']['tl_form']['palettes']['__selector__'][] = 'sendConfirmationM
 $GLOBALS['TL_DCA']['tl_form']['palettes']['__selector__'][] = 'addConfirmationMailAttachments';
 $GLOBALS['TL_DCA']['tl_form']['palettes']['__selector__'][] = 'addFormattedMailAttachments';
 $GLOBALS['TL_DCA']['tl_form']['palettes']['__selector__'][] = 'storeFormdata';
-$GLOBALS['TL_DCA']['tl_form']['palettes']['default'] =  str_replace(array('storeValues', 'sendViaEmail'), array('storeValues;{efgStoreFormdata_legend:hide},storeFormdata', 'sendViaEmail;{efgSendFormattedMail_legend:hide},sendFormattedMail;{efgSendConfirmationMail_legend:hide},sendConfirmationMail'), $GLOBALS['TL_DCA']['tl_form']['palettes']['default'] );
+
+if(substr_count($GLOBALS['TL_DCA']['tl_form']['palettes']['default'],'storeValues')) {
+    $GLOBALS['TL_DCA']['tl_form']['palettes']['default'] =  str_replace(array('storeValues', 'sendViaEmail'), array('storeValues;{efgStoreFormdata_legend:hide},storeFormdata', 'sendViaEmail;{efgSendFormattedMail_legend:hide},sendFormattedMail;{efgSendConfirmationMail_legend:hide},sendConfirmationMail'), $GLOBALS['TL_DCA']['tl_form']['palettes']['default'] );
+}elseif(substr_count($GLOBALS['TL_DCA']['tl_form']['palettes']['default'],'allowTags')) {
+    $GLOBALS['TL_DCA']['tl_form']['palettes']['default'] =  str_replace('allowTags', 'allowTags;{email_legend},sendViaEmail;{store_legend:hide},storeValues', $GLOBALS['TL_DCA']['tl_form']['palettes']['default']);
+    $GLOBALS['TL_DCA']['tl_form']['palettes']['default'] =  str_replace(array('storeValues', 'sendViaEmail'), array(';{efgStoreFormdata_legend:hide},storeFormdata', ';{efgSendFormattedMail_legend:hide},sendFormattedMail;{efgSendConfirmationMail_legend:hide},sendConfirmationMail'), $GLOBALS['TL_DCA']['tl_form']['palettes']['default'] );
+}
 
 // Subpalettes
 array_insert($GLOBALS['TL_DCA']['tl_form']['subpalettes'], count($GLOBALS['TL_DCA']['tl_form']['subpalettes']),
