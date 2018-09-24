@@ -6274,7 +6274,6 @@ var Stylect = {
                     exit();
                 }catch (\Exception $e) {
                     //TODO Handle Expeption
-                    dump($e);
                 }
 
                 //TODO CHECK this
