@@ -128,9 +128,8 @@ class EfgFormdata extends \Backend
 
         // Rebuild internal cache
         if (!$GLOBALS['TL_CONFIG']['bypassCache']) {
-            $this->import('Automator');
-
-            $this->Automator->generateInternalCache();
+            // $this->import('Automator');
+            // $this->Automator->generateInternalCache();
         }
     }
 
