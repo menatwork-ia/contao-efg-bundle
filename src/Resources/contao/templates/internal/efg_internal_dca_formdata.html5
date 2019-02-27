@@ -655,55 +655,57 @@ $GLOBALS['TL_DCA']['tl_formdata']['fields']['<?php echo $strField; ?>']['ff_clas
  * @author     Thomas Kuhn <mail@th-kuhn.de>
  * @package    Efg
  */
-class tl_fd_<?php echo (strlen($this->strFormKey)) ? str_replace(array('-','.'), array('_','_'), $this->strFormKey) : 'feedback'; ?> extends \Backend
-{
+if(!\class_exists('tl_fd_<?php echo (strlen($this->strFormKey)) ? str_replace(array('-','.'), array('_','_'), $this->strFormKey) : 'feedback'; ?>')){
+    class tl_fd_<?php echo (strlen($this->strFormKey)) ? str_replace(array('-','.'), array('_','_'), $this->strFormKey) : 'feedback'; ?> extends \Backend
+    {
 
-	/**
-	 * Database result
-	 * @var array
-	 */
-	protected $arrData = null;
+        /**
+         * Database result
+         * @var array
+         */
+        protected $arrData = null;
 
-	public function __construct()
-	{
-		parent::__construct();
-	}
+        public function __construct()
+        {
+            parent::__construct();
+        }
 
 
-	/*
-	* Create list label for formdata item
-	* This can be used to customize the backend list view for formdata
-	*/
-	public function getRowLabel($arrRow)
-	{
-		$strRowLabel = '';
+        /*
+        * Create list label for formdata item
+        * This can be used to customize the backend list view for formdata
+        */
+        public function getRowLabel($arrRow)
+        {
+            $strRowLabel = '';
 
-		$strKey = 'unpublished';
+            $strKey = 'unpublished';
 
-		$strRowLabel .= '<div class="fd_wrap">';
-		$strRowLabel .= '<div class="fd_head">' . date($GLOBALS['TL_CONFIG']['datimFormat'], $arrRow['date']) . '<span>[' . $arrRow['form'] . ']</span><span>' . $arrRow['alias'] . '</span></div>';
-<?php if (count($this->arrFields) > 10): ?>
-		$strRowLabel .= '<div class="limit_height' . (!$GLOBALS['TL_CONFIG']['doNotCollapse'] ? ' h64' : '') . ' block">';
-<?php endif; ?>
-		$strRowLabel .= '<div class="fd_notes">' . $arrRow['be_notes'] . '</div>';
-		$strRowLabel .= '<div class="mark_links">';
-<?php foreach ($this->arrFields as $varKey => $varVals): ?>
-	<?php $strField = str_replace("'", "\'", \StringUtil::decodeEntities($varKey)); ?>
-		if (strlen($arrRow['<?php echo $strField; ?>']))
-		{
-			$strRowLabel .= '<div class="fd_row field_<?php echo $varKey; ?>">';
-			$strRowLabel .= '<div class="fd_label">' . $GLOBALS['TL_DCA']['tl_formdata']['fields']['<?php echo $strField; ?>']['label'][0] . ': </div>';
-			$strRowLabel .= '<div class="fd_value">' . $arrRow['<?php echo $strField; ?>'] . ' </div>';
-			$strRowLabel .= '</div>';
-		}
-<?php endforeach; ?>
-<?php if (count($this->arrFields) > 10): ?>
-		$strRowLabel .= '</div>';
-<?php endif; ?>
-		$strRowLabel .= '</div></div>';
+            $strRowLabel .= '<div class="fd_wrap">';
+            $strRowLabel .= '<div class="fd_head">' . date($GLOBALS['TL_CONFIG']['datimFormat'], $arrRow['date']) . '<span>[' . $arrRow['form'] . ']</span><span>' . $arrRow['alias'] . '</span></div>';
+    <?php if (count($this->arrFields) > 10): ?>
+            $strRowLabel .= '<div class="limit_height' . (!$GLOBALS['TL_CONFIG']['doNotCollapse'] ? ' h64' : '') . ' block">';
+    <?php endif; ?>
+            $strRowLabel .= '<div class="fd_notes">' . $arrRow['be_notes'] . '</div>';
+            $strRowLabel .= '<div class="mark_links">';
+    <?php foreach ($this->arrFields as $varKey => $varVals): ?>
+        <?php $strField = str_replace("'", "\'", \StringUtil::decodeEntities($varKey)); ?>
+            if (strlen($arrRow['<?php echo $strField; ?>']))
+            {
+                $strRowLabel .= '<div class="fd_row field_<?php echo $varKey; ?>">';
+                $strRowLabel .= '<div class="fd_label">' . $GLOBALS['TL_DCA']['tl_formdata']['fields']['<?php echo $strField; ?>']['label'][0] . ': </div>';
+                $strRowLabel .= '<div class="fd_value">' . $arrRow['<?php echo $strField; ?>'] . ' </div>';
+                $strRowLabel .= '</div>';
+            }
+    <?php endforeach; ?>
+    <?php if (count($this->arrFields) > 10): ?>
+            $strRowLabel .= '</div>';
+    <?php endif; ?>
+            $strRowLabel .= '</div></div>';
 
-		return $strRowLabel;
+            return $strRowLabel;
 
-	}
+        }
+    }
 }
 <?php }
