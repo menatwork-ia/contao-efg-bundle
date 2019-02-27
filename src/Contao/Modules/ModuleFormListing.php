@@ -14,7 +14,7 @@ class ModuleFormListing extends \BackendModule
         $result = $this->Database->prepare("SELECT * FROM tl_form WHERE storeFormdata = 1")->execute();
 
         // TODO Accessrights
-        if ($this->User->isAdmin ){ //|| $this->User->hasAccess('feedback', 'modules')) {
+        if ($this->User->isAdmin || $this->User->hasAccess('feedback', 'modules')){
             $forms = array(
                 array(
                     'name'  => $GLOBALS['TL_LANG']['MOD']['feedback'][0],
@@ -24,7 +24,7 @@ class ModuleFormListing extends \BackendModule
         }
 
         while (($form = $result->fetchAssoc()) !== false) {
-            if ($this->User->isAdmin) { //|| $this->User->hasAccess('fd_' . $form['alias'], 'modules')) {
+            if ($this->User->isAdmin || $this->User->hasAccess('fd_' . $form['alias'], 'modules')) {
                 $forms[] = array(
                     'name'  => $form['title'],
                     'alias' => 'fd_' . $form['alias'],
