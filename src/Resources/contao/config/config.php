@@ -51,20 +51,20 @@ $GLOBALS['BE_MOD']['formdata']['feedback'] = array
 	'stylesheet' => 'bundles/efg/style.css'
 );
 
-foreach (glob(__DIR__ . '/../dca/fd_*.php') as $file) {
+foreach (glob(TL_ROOT . '/system/modules/contao-efg-bundle/dca/fd_*.php') as $file) {
 
     $name = basename($file, '.php');
 
-	if ($name == 'fd_feedback') {
-		continue;
-	}
+    if ($name == 'fd_feedback') {
+        continue;
+    }
 
-	$GLOBALS['BE_MOD']['formdata'][$name] = array
-	(
-		'tables'     => array('tl_formdata', 'tl_formdata_details'),
-		'import'     => array('MenAtWork\\EfgBundle\\Contao\\FormdataBackend', 'importCsv'),
-		'stylesheet' => 'bundles/efg/style.css'
-	);
+    $GLOBALS['BE_MOD']['formdata'][$name] = array
+    (
+        'tables'     => array('tl_formdata', 'tl_formdata_details'),
+        'import'     => array('MenAtWork\\EfgBundle\\Contao\\FormdataBackend', 'importCsv'),
+        'stylesheet' => 'bundles/efg/style.css'
+    );
 }
 
 /**
