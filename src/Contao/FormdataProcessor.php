@@ -79,6 +79,10 @@ class FormdataProcessor extends \Frontend
 			$arrName[] = $strDefault;
 		}
 
+		if (!$arrName) {
+		    return '';
+        }
+
 		return implode(' ', $arrName);
 	}
 
