@@ -577,7 +577,7 @@ class ExtendedForm extends \Form
 		{
 			if ($this->intTotalPages == 1 || (!$this->blnMultipage && !$this->blnEditform))
 			{
-				$this->processFormData($arrSubmitted, $arrLabels);
+				$this->processFormData($arrSubmitted, $arrLabels, $arrFields);
 			}
 			else
 			{
@@ -609,7 +609,7 @@ class ExtendedForm extends \Form
 
 						// Populate arrSubmitted from session
 						$arrSubmitted = $_SESSION['FORM_DATA'];
-						$this->processFormData($arrSubmitted, $arrLabels);
+						$this->processFormData($arrSubmitted, $arrLabels, $arrFields);
 					}
 				}
 			}
