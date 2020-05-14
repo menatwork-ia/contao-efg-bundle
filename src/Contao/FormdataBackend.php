@@ -7,6 +7,7 @@
  *
  * @package   Efg
  * @author    Thomas Kuhn <mail@th-kuhn.de>
+ * @author    Marcel Rudolf <dev@novusvetus.de>
  * @license   http://www.gnu.org/licenses/lgpl-3.0.html LGPL
  * @copyright Thomas Kuhn 2007-2014
  *
@@ -482,12 +483,17 @@ class FormdataBackend extends \Backend
 
         $result = \Database::getInstance()->prepare("SELECT label,name,type FROM tl_form_field WHERE pid=?")->execute($intFormId);
 
+        $clean = function($string)
+        {
+            return addcslashes($string, '\'');
+        };
+
         while ($result->next()) {
             if (empty($result->label)) {
                 continue;
             }
 
-            $strFields .= $result->label . ': {{form::' . $result->name . '}}<br/>';
+            $strFields .= $clean($result->label) . ': {{form::' . $clean($result->name) . '}}<br/>';
         }
 
         $GLOBALS['TL_LANG']['tl_form']['confirmationMailText'][1] = sprintf('<a style="text-decoration: underline;" onclick="javascript:document.getElementById(\'ctrl_confirmationMailText\').value+=\'<br/>%s\'.replace(/\<br\/\>/g,\'\\n\');">%s</a> ',
