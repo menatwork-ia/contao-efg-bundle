@@ -471,7 +471,7 @@ endforeach;	?>
 endforeach; ?>),
 <?php if ($this->arrForm['key'] != 'feedback'): ?>
 		'formFilterKey'              => 'form',
-		'formFilterValue'            => '<?php echo $this->arrForm['title']; ?>'
+		'formFilterValue'            => '<?php echo \str_replace("'", "\'", $this->arrForm['title']); ?>'
 <?php endif; ?>
 	)
 );
