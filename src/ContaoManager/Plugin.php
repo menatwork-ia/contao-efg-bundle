@@ -8,6 +8,7 @@
 namespace MenAtWork\EfgBundle\ContaoManager;
 
 use Contao\CoreBundle\ContaoCoreBundle;
+use Contao\ListingBundle\ContaoListingBundle;
 use Contao\ManagerPlugin\Bundle\BundlePluginInterface;
 use Contao\ManagerPlugin\Bundle\Config\BundleConfig;
 use Contao\ManagerPlugin\Bundle\Config\ConfigInterface;
@@ -31,7 +32,10 @@ class Plugin implements BundlePluginInterface
     {
         return [
             BundleConfig::create(EfgBundle::class)
-                ->setLoadAfter([ContaoCoreBundle::class])
+                ->setLoadAfter([
+                    ContaoCoreBundle::class,
+                    ContaoListingBundle::class,
+                ])
                 ->setReplace(['contao-legacy/efg'])
                 ->setReplace(['byteworks/efg']),
         ];
