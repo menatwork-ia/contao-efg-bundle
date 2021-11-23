@@ -127,7 +127,7 @@
                 'search'    => true,
                 'filter'    => true,
                 'sorting'   => true,
-                'sql'       => "varchar(64) NOT NULL default ''"
+                'sql'       => "text NOT NULL default ''"
             ),
             'date'             => array
             (
