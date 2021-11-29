@@ -422,7 +422,7 @@ endforeach;	?>
 			'eval'                    => array('rgxp'=>'alnum', 'unique'=>true, 'spaceToUnderscore'=>true, 'maxlength'=>64, 'tl_class'=>'w50'),
 			'save_callback' => array
 			(
-				array('tl_formdata', 'generateAlias')
+				array('MenAtWork\\EfgBundle\\Contao\\Formdata', 'generateAlias')
 			)
 		),
 		'confirmationSent' => array
@@ -539,6 +539,7 @@ endif; ?>
 <?php endforeach; ?>
 <?php foreach ($arrOpts as $kOpt => $arrOpt): ?>
 <?php if ($arrOpt['default']): ?>
+        unset($GLOBALS['TL_DCA']['tl_formdata']['fields']['<?php echo $strField; ?>']['default']);
 	$GLOBALS['TL_DCA']['tl_formdata']['fields']['<?php echo $strField; ?>']['default'][] = '<?php echo str_replace("'", "\'", \StringUtil::decodeEntities($arrOpt['label']))?>';
 <?php endif; ?>
 <?php endforeach; ?>
