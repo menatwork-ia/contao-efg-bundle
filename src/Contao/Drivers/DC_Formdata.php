@@ -6109,8 +6109,15 @@ var Stylect = {
                                     }
                                 }
 
+                                // We search the right value, as key or as value.
                                 $options = array_flip($arrOptions);
-                                $strVal = $options[$row[$v]];
+                                if(array_key_exists($row[$v], $arrOptions)){
+                                    $strVal = $arrOptions[$row[$v]];
+                                } else if(array_key_exists($row[$v], $options)){
+                                    $strVal = $options[$row[$v]];
+                                } else {
+                                    $strVal = $row[$v];
+                                }
                             }
                             else
                             {
