@@ -201,6 +201,10 @@ class DC_Formdata extends \DataContainer implements \listable, \editable
     // This can be changed by configuration setting: $GLOBALS['EFG']['exportConvertToCharset'] = 'TARGET_CHARSET'
     protected $strExportConvertToCharset = 'CP1252';
 
+    /**
+     * @var SessionInterface|null
+     */
+    protected $Session = null;
 
     /**
      * Initialize the object
@@ -212,7 +216,8 @@ class DC_Formdata extends \DataContainer implements \listable, \editable
         parent::__construct();
 
         /** @var SessionInterface $objSession */
-        $objSession = \System::getContainer()->get('session');
+        $objSession    = \System::getContainer()->get('session');
+        $this->Session = $objSession;
 
         // Check the request token (see #4007)
         if (isset($_GET['act']))
@@ -229,7 +234,8 @@ class DC_Formdata extends \DataContainer implements \listable, \editable
         // Clear the clipboard
         if (isset($_GET['clipboard']))
         {
-            $objSession->set('CLIPBOARD', array());
+            $this->Session->set('CLIPBOARD', array());
+            $this->Session->save();
             $this->redirect($this->getReferer());
         }
 
@@ -304,7 +310,6 @@ class DC_Formdata extends \DataContainer implements \listable, \editable
         if (\Input::post('FORM_SUBMIT') == 'tl_select')
         {
             $ids = \Input::post('IDS');
-
             if (!\is_array($ids) || empty($ids))
             {
                 $this->reload();
@@ -312,28 +317,28 @@ class DC_Formdata extends \DataContainer implements \listable, \editable
 
             $ids = array_map('rawurldecode', $ids);
 
-            $session = $this->Session->getData();
-            $session['CURRENT']['IDS'] = \Input::post('IDS');
-
-            $session = $objSession->all();
+            $session = $this->Session->all();
             $session['CURRENT']['IDS'] = $ids;
-            $objSession->replace($session);
+            $this->Session->replace($session);
 
             if (isset($_POST['edit']))
             {
+                $this->Session->save();
                 $this->redirect(str_replace('act=select', 'act=editAll', \Environment::get('request')));
             }
             elseif (isset($_POST['delete']))
             {
+                $this->Session->save();
                 $this->redirect(str_replace('act=select', 'act=deleteAll', \Environment::get('request')));
             }
             elseif (isset($_POST['override']))
             {
+                $this->Session->save();
                 $this->redirect(str_replace('act=select', 'act=overrideAll', \Environment::get('request')));
             }
             elseif (isset($_POST['cut']) || isset($_POST['copy']))
             {
-                $arrClipboard = $objSession->get('CLIPBOARD');
+                $arrClipboard = $this->Session->get('CLIPBOARD');
 
                 $arrClipboard[$strTable] = array
                 (
@@ -341,7 +346,8 @@ class DC_Formdata extends \DataContainer implements \listable, \editable
                     'mode' => (isset($_POST['cut']) ? 'cutAll' : 'copyAll')
                 );
 
-                $objSession->set('CLIPBOARD', $arrClipboard);
+                $this->Session->set('CLIPBOARD', $arrClipboard);
+                $this->Session->save();
                 $this->redirect($this->getReferer());
             }
         }
@@ -433,9 +439,9 @@ class DC_Formdata extends \DataContainer implements \listable, \editable
         // Store the current referer
         if (!empty($this->ctable) && !\Input::get('act') && !\Input::get('key') && !\Input::get('token') && \Environment::get('script') == 'contao' && !\Environment::get('isAjaxRequest'))
         {
-            $session = $objSession->get('referer');
+            $session = $this->Session->get('referer');
             $session[TL_REFERER_ID][$this->strTable] = substr(\Environment::get('requestUri'), strlen(TL_PATH) + 1);
-            $objSession->set('referer', $session);
+            $this->Session->set('referer', $session);
         }
     }
 
@@ -565,10 +571,11 @@ class DC_Formdata extends \DataContainer implements \listable, \editable
         }
 
         // Store the current IDs
-        $session = $this->Session->getData();
-        $session['CURRENT']['IDS'] = $this->current;
         try {
-            $this->Session->setData($session);
+            $session = $this->Session->all();
+            $session['CURRENT']['IDS'] = $this->current;
+            $this->Session->replace($session);
+            $this->Session->save();
         } catch(\Exception $ex) {
             $this->logger('For Session setData occured an error', __METHOD__, TL_ERROR);
             //TODO Handle Exception
@@ -1068,9 +1075,8 @@ class DC_Formdata extends \DataContainer implements \listable, \editable
             \Controller::redirect('contao?act=error');
         }
 
-        $session = $this->Session->getData();
+        $session = $this->Session->all();
         $ids = $session['CURRENT']['IDS'];
-
         if (is_array($ids) && strlen($ids[0]))
         {
             foreach ($ids as $id)
@@ -1915,7 +1921,7 @@ class DC_Formdata extends \DataContainer implements \listable, \editable
         $this->import('BackendUser', 'User');
 
         // Get current IDs from session
-        $session = $this->Session->getData();
+        $session = $this->Session->all();
         $ids = $session['CURRENT']['IDS'];
 
         if ($intId != '' && \Environment::get('isAjaxRequest'))
@@ -1928,7 +1934,8 @@ class DC_Formdata extends \DataContainer implements \listable, \editable
         {
             $session['CURRENT'][$this->strTable] = \Input::post('all_fields');
             try {
-                $this->Session->setData($session);
+                $this->Session->replace($session);
+                $this->Session->save();
             } catch(\Exception $ex) {
                 $this->logger('For Session setData occured an error', __METHOD__, TL_ERROR);
                 //TODO Handle Exception
@@ -3650,7 +3657,7 @@ class DC_Formdata extends \DataContainer implements \listable, \editable
     protected function searchMenu()
     {
         $searchFields = array();
-        $session = $this->Session->getData();
+        $session = $this->Session->all();
 
         // Get search fields
         foreach ($GLOBALS['TL_DCA'][$this->strTable]['fields'] as $k=>$v)
@@ -3690,7 +3697,8 @@ class DC_Formdata extends \DataContainer implements \listable, \editable
                 catch (\Exception $e) {}
             }
 
-            $this->Session->setData($session);
+            $this->Session->replace($session);
+            $this->Session->save();
         }
 
         // Set search value from session
@@ -3768,7 +3776,7 @@ class DC_Formdata extends \DataContainer implements \listable, \editable
         }
 
         $this->bid = 'tl_buttons_a';
-        $session = $this->Session->getData();
+        $session = $this->Session->all();
         $orderBy = $GLOBALS['TL_DCA'][$this->strTable]['list']['sorting']['fields'];
         $firstOrderBy = preg_replace('/\s+.*$/', '', $orderBy[0]);
 
@@ -3785,7 +3793,8 @@ class DC_Formdata extends \DataContainer implements \listable, \editable
         {
             $session['sorting'][$strSessionKey] = in_array($GLOBALS['TL_DCA'][$this->strTable]['fields'][\Input::post('tl_sort')]['flag'], array(2, 4, 6, 8, 10, 12)) ? \Input::post('tl_sort').' DESC' : \Input::post('tl_sort');
             try {
-                $this->Session->setData($session);
+                $this->Session->replace($session);
+                $this->Session->save();
             } catch(\Exception $ex) {
                 $this->logger('For Session setData occured an error', __METHOD__, TL_ERROR);
                 //TODO Handle Exception
@@ -3840,7 +3849,7 @@ class DC_Formdata extends \DataContainer implements \listable, \editable
      */
     protected function limitMenu($blnOptional=false)
     {
-        $session = $this->Session->getData();
+        $session = $this->Session->all();
         $filter = ($GLOBALS['TL_DCA'][$this->strTable]['list']['sorting']['mode'] == 4) ? $this->strTable.'_'.CURRENT_ID : (strlen($this->strFormKey)) ? $this->strFormKey : $this->strTable;
         $fields = '';
 
@@ -3866,7 +3875,8 @@ class DC_Formdata extends \DataContainer implements \listable, \editable
             }
 
             try {
-                $this->Session->setData($session);
+                $this->Session->replace($session);
+                $this->Session->save();
             } catch(\Exception $ex) {
                 $this->logger('For Session setData occured an error', __METHOD__, TL_ERROR);
                 //TODO Handle Exception
@@ -3990,7 +4000,7 @@ class DC_Formdata extends \DataContainer implements \listable, \editable
         $fields = '';
         $this->bid = 'tl_buttons_a';
         $sortingFields = array();
-        $session = $this->Session->getData();
+        $session = $this->Session->all();
         $filter = ($GLOBALS['TL_DCA'][$this->strTable]['list']['sorting']['mode'] == 4) ? $this->strTable.'_'.CURRENT_ID : (strlen($this->strFormKey)) ? $this->strFormKey : $this->strTable;
 
         // Get the sorting fields
@@ -4030,7 +4040,8 @@ class DC_Formdata extends \DataContainer implements \listable, \editable
             }
 
             try {
-                $this->Session->setData($session);
+                $this->Session->replace($session);
+                $this->Session->save();
             } catch(\Exception $ex) {
                 $this->logger('For Session setData occured an error', __METHOD__, TL_ERROR);
                 //TODO Handle Exception
@@ -5666,7 +5677,7 @@ var Stylect = {
         }
 
         // filter or search for values
-        $session = $this->Session->getData();
+        $session = $this->Session->all();
 
         $showFields = array_merge($this->arrBaseFields, $this->arrDetailFields);
         $ignoreFields = array('tstamp');
