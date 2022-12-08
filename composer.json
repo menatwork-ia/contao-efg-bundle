@@ -28,8 +28,8 @@
         "issues": "https://github.com/menatwork/contao-efg-bundle/issues"
     },
     "require": {
-        "php": "^7.0",
-        "contao/core-bundle": "^4.4",
+        "php": "^7.0 | ^8.0",
+        "contao/core-bundle": "^4.4 | ^4.13",
         "phpoffice/phpspreadsheet": "^1.2"
     },
     "autoload":{
