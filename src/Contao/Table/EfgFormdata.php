@@ -56,7 +56,7 @@ class EfgFormdata extends \Backend
         // TODO: remove this fix if xdependentcalendarfield is available for Contao 3 and config is fixed
         // Fix config for xdependentcalendarfields
         // xdependentcalendarfields/config/config.php registers 'FormTextField', which is a front end widget)
-        if ($GLOBALS['BE_FFL']['xdependentcalendarfields'] == 'FormTextField') {
+        if (!empty($GLOBALS['BE_FFL']['xdependentcalendarfields']) && $GLOBALS['BE_FFL']['xdependentcalendarfields'] == 'FormTextField') {
             $GLOBALS['BE_FFL']['xdependentcalendarfields'] = 'TextField';
         }
 
@@ -144,7 +144,7 @@ class EfgFormdata extends \Backend
         $arrFields = array_keys($GLOBALS['TL_DCA']['tl_formdata']['fields']);
         // check/set restrictions
         foreach ($arrFields as $strField) {
-            if ($GLOBALS['TL_DCA']['tl_formdata']['fields'][$strField]['exclude'] == true) {
+            if (!empty($GLOBALS['TL_DCA']['tl_formdata']['fields'][$strField]['exclude']) && $GLOBALS['TL_DCA']['tl_formdata']['fields'][$strField]['exclude'] == true) {
                 if ($this->User->isAdmin || $this->User->hasAccess('tl_formdata::' . $strField, 'alexf') == true) {
                     $GLOBALS['TL_DCA']['tl_formdata']['fields'][$strField]['exclude'] = false;
                 }

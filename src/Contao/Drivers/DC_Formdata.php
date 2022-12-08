@@ -347,8 +347,8 @@ class DC_Formdata extends \DataContainer implements \listable, \editable
         }
 
         $this->strTable = $strTable;
-        $this->ptable = $GLOBALS['TL_DCA'][$this->strTable]['config']['ptable'];
-        $this->ctable = $GLOBALS['TL_DCA'][$this->strTable]['config']['ctable'];
+        $this->ptable = $GLOBALS['TL_DCA'][$this->strTable]['config']['ptable'] ?? null;
+        $this->ctable = $GLOBALS['TL_DCA'][$this->strTable]['config']['ctable'] ?? null;
         $this->treeView = false;
         $this->root = null;
         $this->arrModule = $arrModule;
@@ -3667,7 +3667,8 @@ class DC_Formdata extends \DataContainer implements \listable, \editable
             return '';
         }
 
-        $strSessionKey = ($GLOBALS['TL_DCA'][$this->strTable]['list']['sorting']['mode'] == 4) ? $this->strTable.'_'.CURRENT_ID : (strlen($this->strFormKey)) ? $this->strFormKey : $this->strTable;
+        $temp_formkey = strlen($this->strFormKey) ? $this->strFormKey : $this->strTable;
+        $strSessionKey = $GLOBALS['TL_DCA'][$this->strTable]['list']['sorting']['mode'] == 4 ? $this->strTable.'_'.CURRENT_ID : $temp_formkey;
 
         // Store search value in the current session
         if (\Input::post('FORM_SUBMIT') == 'tl_filters')
@@ -3772,7 +3773,8 @@ class DC_Formdata extends \DataContainer implements \listable, \editable
         $orderBy = $GLOBALS['TL_DCA'][$this->strTable]['list']['sorting']['fields'];
         $firstOrderBy = preg_replace('/\s+.*$/', '', $orderBy[0]);
 
-        $strSessionKey = ($GLOBALS['TL_DCA'][$this->strTable]['list']['sorting']['mode'] == 4) ? $this->strTable.'_'.CURRENT_ID : (strlen($this->strFormKey)) ? $this->strFormKey : $this->strTable;
+        $temp_formkey = strlen($this->strFormKey) ? $this->strFormKey : $this->strTable;
+        $strSessionKey = ($GLOBALS['TL_DCA'][$this->strTable]['list']['sorting']['mode'] == 4) ? $this->strTable.'_'.CURRENT_ID : $temp_formkey;
 
         // Add PID to order fields
         if ($GLOBALS['TL_DCA'][$this->strTable]['list']['sorting']['mode'] == 3 && \Database::getInstance()->fieldExists('pid', $this->strTable))
@@ -3841,7 +3843,7 @@ class DC_Formdata extends \DataContainer implements \listable, \editable
     protected function limitMenu($blnOptional=false)
     {
         $session = $this->Session->getData();
-        $filter = ($GLOBALS['TL_DCA'][$this->strTable]['list']['sorting']['mode'] == 4) ? $this->strTable.'_'.CURRENT_ID : (strlen($this->strFormKey)) ? $this->strFormKey : $this->strTable;
+        $filter = ($GLOBALS['TL_DCA'][$this->strTable]['list']['sorting']['mode'] == 4) ? $this->strTable.'_'.CURRENT_ID : ((strlen($this->strFormKey)) ? $this->strFormKey : $this->strTable);
         $fields = '';
 
         if (is_array($this->procedure))
@@ -3991,7 +3993,7 @@ class DC_Formdata extends \DataContainer implements \listable, \editable
         $this->bid = 'tl_buttons_a';
         $sortingFields = array();
         $session = $this->Session->getData();
-        $filter = ($GLOBALS['TL_DCA'][$this->strTable]['list']['sorting']['mode'] == 4) ? $this->strTable.'_'.CURRENT_ID : (strlen($this->strFormKey)) ? $this->strFormKey : $this->strTable;
+        $filter = ($GLOBALS['TL_DCA'][$this->strTable]['list']['sorting']['mode'] == 4) ? $this->strTable.'_'.CURRENT_ID : ((strlen($this->strFormKey)) ? $this->strFormKey : $this->strTable);
 
         // Get the sorting fields
         foreach ($GLOBALS['TL_DCA'][$this->strTable]['fields'] as $k => $v)
@@ -5699,7 +5701,7 @@ var Stylect = {
         $sqlWhere = '';
 
         // Set search value from session
-        $strSessionKey = ($GLOBALS['TL_DCA'][$this->strTable]['list']['sorting']['mode'] == 4) ? $this->strTable.'_'.CURRENT_ID : (strlen($this->strFormKey)) ? $this->strFormKey : $this->strTable;
+        $strSessionKey = ($GLOBALS['TL_DCA'][$this->strTable]['list']['sorting']['mode'] == 4) ? $this->strTable.'_'.CURRENT_ID : ((strlen($this->strFormKey)) ? $this->strFormKey : $this->strTable);
         if (strlen($session['search'][$strSessionKey]['value']))
         {
             $sqlSearchField = $session['search'][$strSessionKey]['field'];
