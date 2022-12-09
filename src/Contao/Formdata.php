@@ -1306,7 +1306,7 @@ class Formdata extends \Frontend
 				case 'checkbox':
 				case 'condition': // conditionalforms
 
-					$blnEfgStoreValues = ($GLOBALS['TL_DCA']['tl_formdata']['fields'][$arrField['name']]['eval']['efgStoreValues'] ? true : false);
+					$blnEfgStoreValues = (($GLOBALS['TL_DCA']['tl_formdata']['fields'][$arrField['name']]['eval']['efgStoreValues'] ?? false) ? true : false);
 
 					$strVal = '';
 					$arrSel = array();
@@ -1485,16 +1485,16 @@ class Formdata extends \Frontend
 				default:
 					$strVal = $varValue;
 
-					if ($GLOBALS['TL_DCA']['tl_formdata']['fields'][$arrField['name']]['eval']['rgxp'] == 'date')
+					if (($GLOBALS['TL_DCA']['tl_formdata']['fields'][$arrField['name']]['eval']['rgxp'] ?? null) == 'date')
 					{
 						$strVal = \Date::parse($GLOBALS['TL_CONFIG']['dateFormat'], $strVal);
 					}
-					elseif ($GLOBALS['TL_DCA']['tl_formdata']['fields'][$arrField['name']]['eval']['rgxp'] == 'time')
+					elseif (($GLOBALS['TL_DCA']['tl_formdata']['fields'][$arrField['name']]['eval']['rgxp'] ?? null) == 'time')
 					{
 						$strVal = \Date::parse($GLOBALS['TL_CONFIG']['timeFormat'], $strVal);
 					}
-					elseif ($GLOBALS['TL_DCA']['tl_formdata']['fields'][$arrField['name']]['eval']['rgxp'] == 'datim'
-						|| in_array($GLOBALS['TL_DCA']['tl_formdata']['fields'][$arrField['name']]['flag'], array(5, 6, 7, 8, 9, 10)))
+					elseif (($GLOBALS['TL_DCA']['tl_formdata']['fields'][$arrField['name']]['eval']['rgxp'] ?? null) == 'datim'
+						|| in_array(($GLOBALS['TL_DCA']['tl_formdata']['fields'][$arrField['name']]['flag'] ?? null), array(5, 6, 7, 8, 9, 10)))
 					{
 						$strVal = \Date::parse($GLOBALS['TL_CONFIG']['datimFormat'], $strVal);
 					}
@@ -1523,7 +1523,7 @@ class Formdata extends \Frontend
 			return false;
 		}
 
-		$strType = $arrField['type'];
+		$strType = ($arrField['type'] ?? null);
 		if (TL_MODE == 'FE' && !empty($arrField['formfieldType']))
 		{
 			$strType = $arrField['formfieldType'];
@@ -1694,7 +1694,7 @@ class Formdata extends \Frontend
 					// NOTE: different array structure in Backend (set by dca) and Frontend (set from tl_form_field)
 					// .. in Frontend: one-dimensional array like $arrField['rgxp'], $arrField['dateFormat']
 					// .. in Backend: multidimensional array like $arrField['eval']['rgxp']
-					if ($arrField['rgxp'] && in_array($arrField['rgxp'], array('date', 'datim', 'time')))
+					if (($arrField['rgxp'] ?? false) && in_array($arrField['rgxp'], array('date', 'datim', 'time')))
 					{
 						if ($varVal)
 						{
@@ -2229,7 +2229,7 @@ class Formdata extends \Frontend
 	 * @param array $arrFormFields Form fields
 	 * @return object
 	 */
-	public function prepareMailData($objMailProperties, $arrSubmitted, $arrFiles, $arrForm, $arrFormFields)
+	public function prepareMailData($objMailProperties, $arrSubmitted, $arrFiles, $arrForm, array $arrFormFields)
 	{
 
 		$sender = $objMailProperties->sender;
@@ -2305,17 +2305,25 @@ class Formdata extends \Frontend
 				// Formdata field
 				case 'form':
 					$strKey = $elements[1];
-					list($strKey, $arrTagParams) = explode('?', $strKey);
+
+                    if(stripos($strKey, '?') !== false){
+                        list($strKey, $arrTagParams) = explode('?', $strKey);
+                    } else {
+                        $strKey = $strKey;
+                        $arrTagParams = '';
+                    }
+
+                    //list($strKey, $arrTagParams) = explode('?', $strKey);
 
 					if (!empty($arrTagParams))
 					{
 						$arrTagParams = $this->parseInsertTagParams($tag);
 					}
 
-					$arrField = $arrFormFields[$strKey];
+					$arrField = ($arrFormFields[$strKey] ?? []);
 					$arrField['efgMailSkipEmpty'] = $blnSkipEmptyFields;
 
-					$strType = $arrField['formfieldType'];
+					$strType = ($arrField['formfieldType'] ?? '');
 
 					if (!isset($arrFormFields[$strKey]) && in_array($strKey, $this->arrBaseFields))
 					{
@@ -2454,7 +2462,7 @@ class Formdata extends \Frontend
 						{
 							if (TL_MODE == 'BE')
 							{
-								$strVal = $this->prepareDatabaseValueForMail($arrSubmitted[$strKey], $arrField, $arrFiles[$strKey]);
+								$strVal = $this->prepareDatabaseValueForMail(($arrSubmitted[$strKey] ?? null), $arrField, ($arrFiles[$strKey] ?? null));
 							}
 							else
 							{

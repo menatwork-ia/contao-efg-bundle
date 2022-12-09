@@ -107,7 +107,7 @@ class EfgFormdata extends \Backend
                 include_once $strFile;
 
                 // Replace standard dca tl_formdata by form-dependent dca
-                if (is_array($GLOBALS['TL_DCA'][$strName]) && count($GLOBALS['TL_DCA'][$strName]) > 0) {
+                if (is_array(($GLOBALS['TL_DCA'][$strName]??null)) && count($GLOBALS['TL_DCA'][$strName]) > 0) {
                     $GLOBALS['TL_DCA']['tl_formdata'] = $GLOBALS['TL_DCA'][$strName];
                     unset($GLOBALS['TL_DCA'][$strName]);
                 }
