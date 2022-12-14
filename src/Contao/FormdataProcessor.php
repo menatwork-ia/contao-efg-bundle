@@ -800,13 +800,13 @@ class FormdataProcessor extends \Frontend
 	 */
 	public function processConfirmationContent($strContent)
 	{
-		$arrSubmitted = $_SESSION['EFP']['FORMDATA'];
+		$arrSubmitted = $_SESSION['EFP']['FORMDATA'] ?? null;
 
 		// fix: after submission of normal single page form array $_SESSION['EFP']['FORMDATA'] is empty
 		if (null === $arrSubmitted || (count($arrSubmitted) == 1 && array_keys($arrSubmitted) === array('_formId_')))
 		{
-			$arrSubmitted = $_SESSION['FORM_DATA'];
-			$arrSubmitted['_formId_'] = $_SESSION['EFP']['FORMDATA'];
+			$arrSubmitted = $_SESSION['FORM_DATA'] ?? [];
+			$arrSubmitted['_formId_'] = $_SESSION['EFP']['FORMDATA'] ?? '';
 		}
 
 		$blnProcess = false;

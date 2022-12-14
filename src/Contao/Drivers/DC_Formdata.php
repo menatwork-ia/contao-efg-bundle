@@ -3037,7 +3037,7 @@ class DC_Formdata extends \DataContainer implements \listable, \editable
                 if (is_array($callback))
                 {
                     $this->import($callback[0]);
-                    $status = $this->{$callback[0]}->{$callback[1]}($this->strTable, $new_records[$this->strTable], $ptable, $ctable);
+                    $status = $this->{$callback[0]}->{$callback[1]}($this->strTable, ($new_records[$this->strTable]??null), $ptable, $ctable);
                 }
                 elseif (is_callable($callback))
                 {
