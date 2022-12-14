@@ -3702,7 +3702,7 @@ class DC_Formdata extends \DataContainer implements \listable, \editable
         }
 
         // Set search value from session
-        elseif (!empty($session['search'])  && $session['search'][$strSessionKey]['value'] != '')
+        elseif (!empty($session['search'])  && ($session['search'][$strSessionKey]['value'] ?? '') != '')
         {
             $sqlSearchField = $session['search'][$strSessionKey]['field'];
             if (in_array($sqlSearchField, $this->arrDetailFields))
