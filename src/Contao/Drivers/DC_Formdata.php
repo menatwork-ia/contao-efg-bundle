@@ -936,7 +936,7 @@ class DC_Formdata extends \DataContainer implements \listable, \editable
      */
     public function delete($blnDoNotRedirect=false)
     {
-        if ($GLOBALS['TL_DCA'][$this->strTable]['config']['notDeletable'])
+        if (!empty($GLOBALS['TL_DCA'][$this->strTable]['config']['notDeletable']))
         {
             $this->logger('Table "'.$this->strTable.'" is not deletable', __METHOD__, TL_ERROR);
             \Controller::redirect('contao?act=error');
@@ -1104,7 +1104,7 @@ class DC_Formdata extends \DataContainer implements \listable, \editable
         foreach ($ctable as $v)
         {
             $this->loadDataContainer($v);
-            $cctable[$v] = $GLOBALS['TL_DCA'][$v]['config']['ctable'];
+            $cctable[$v] = ($GLOBALS['TL_DCA'][$v]['config']['ctable']??null);
 
             $objDelete = \Database::getInstance()->prepare("SELECT id FROM " . $v . " WHERE pid=?")
                 ->execute($id);
