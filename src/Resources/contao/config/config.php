@@ -43,7 +43,7 @@ $GLOBALS['BE_MOD']['content'] = array_merge($GLOBALS['BE_MOD']['content'], array
 	),
 ));
 
-//array_insert($GLOBALS['BE_MOD'], 1, array('formdata' => array()));
+array_insert($GLOBALS['BE_MOD'], 1, array('formdata' => array()));
 
 $GLOBALS['BE_MOD']['formdata']['feedback'] = array
 (
