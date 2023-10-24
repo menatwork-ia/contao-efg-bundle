@@ -23,6 +23,7 @@ use PhpOffice\PhpSpreadsheet\Exception;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Psr\Log\LogLevel;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
@@ -1493,7 +1494,7 @@ class DC_Formdata extends \DataContainer implements \listable, \editable
                             if (!is_array($this->varValue))
                             {
                                 $strSep = (isset($GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['eval']['csv'])) ? $GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['eval']['csv'] : '|';
-                                $arrValues = explode($strSep, $this->varValue);
+                                $arrValues = explode($strSep, (string) $this->varValue);
                             }
                             else
                             {
@@ -5653,8 +5654,7 @@ var Stylect = {
 
     public function export($strMode='csv')
     {
-
-        if (strlen(\Input::get('expmode')))
+        if (!empty(\Input::get('expmode')))
         {
             $strMode = \Input::get('expmode');
         }
@@ -5666,7 +5666,7 @@ var Stylect = {
         $arrHookData = array();
         $arrHookDataColumns = array();
 
-        if ($strMode=='exportxls')  //TODO XLS EXPORT intigrieren???
+        if ($strMode=='exportxls' || $strMode=='xls')  //TODO XLS EXPORT intigrieren???
         {
             // Check for HOOK efgExportXls
             if (array_key_exists('efgExportXls', $GLOBALS['TL_HOOKS']) && is_array($GLOBALS['TL_HOOKS']['efgExportXls']))
@@ -5696,7 +5696,7 @@ var Stylect = {
         $orderBy = $GLOBALS['TL_DCA'][$this->strTable]['list']['sorting']['fields'];
         $firstOrderBy = preg_replace('/\s+.*$/i', '', $orderBy[0]);
 
-        if (is_array($this->orderBy) && strlen($this->orderBy[0]))
+        if (is_array($this->orderBy) && !empty($this->orderBy) && strlen($this->orderBy[0]))
         {
             $orderBy = $this->orderBy;
             $firstOrderBy = $this->firstOrderBy;
@@ -5714,7 +5714,7 @@ var Stylect = {
 
         // Set search value from session
         $strSessionKey = ($GLOBALS['TL_DCA'][$this->strTable]['list']['sorting']['mode'] == 4) ? $this->strTable.'_'.CURRENT_ID : ((strlen($this->strFormKey)) ? $this->strFormKey : $this->strTable);
-        if (strlen($session['search'][$strSessionKey]['value']))
+        if (!empty($session['search'][$strSessionKey]['value']))
         {
             $sqlSearchField = $session['search'][$strSessionKey]['field'];
             if (in_array($sqlSearchField, $this->arrDetailFields))
@@ -5870,13 +5870,11 @@ var Stylect = {
             header('Pragma: public');
             header('Expires: 0');
         }
-        elseif ($strMode=='xls')
+        elseif ($strMode=='exportxls' || $strMode=='xls')
         {
             if (!$blnCustomXlsExport)
             {
-
                 $spreadsheet = new Spreadsheet();  //PHPOffice\PhpSpreadsheet\Spreadsheet();
-
                 $spreadsheet->getProperties()
                     ->setCreator("ERF Formdatagenerator")
                     ->setTitle("XLS Export " . date("Ymd_His"));
@@ -5899,16 +5897,7 @@ var Stylect = {
                     //TODO Handle Expection
                 }
 
-                /// Create new Worksheet
-                //$spreadsheet->createSheet();
-
-                // To clear it ou tof memory us:
-                //$spreadsheet->disconnectWorksheets();
-                //unset($spreadsheet);
-                //TODO CHECK this
-//				$xls = new xlsexport();
-//				$strXlsSheet = "Export";
-//				$xls->addworksheet($strXlsSheet);
+//                $writer = new Xlsx($spreadsheet);
             }
         }
 
@@ -5948,7 +5937,7 @@ var Stylect = {
 
                 if ($intRowCounter == 1)
                 {
-                    if ($strMode == 'xls')
+                    if ($strMode=='exportxls' || $strMode=='xls')
                     {
                         if (!$blnCustomXlsExport)
                         {
@@ -5974,11 +5963,11 @@ var Stylect = {
                         {
                             $strName = $v;
                         }
-                        elseif (strlen($GLOBALS['TL_DCA'][$this->strTable]['fields'][$v]['label'][0]))
+                        elseif (!empty($GLOBALS['TL_DCA'][$this->strTable]['fields'][$v]['label'][0]))
                         {
                             $strName = $GLOBALS['TL_DCA'][$this->strTable]['fields'][$v]['label'][0];
                         }
-                        elseif (strlen($GLOBALS['TL_LANG']['tl_formdata'][$v][0]))
+                        elseif (!empty($GLOBALS['TL_LANG']['tl_formdata'][$v][0]))
                         {
                             $strName = $GLOBALS['TL_LANG']['tl_formdata'][$v][0];
                         }
@@ -5992,9 +5981,12 @@ var Stylect = {
                             $strName = \StringUtil::decodeEntities($strName);
                         }
 
-                        if ($this->blnExportUTF8Decode || ($strMode == 'xls' && !$blnCustomXlsExport))
-                        {
-//							$strName = $this->convertEncoding($strName, $GLOBALS['TL_CONFIG']['characterSet'], $this->strExportConvertToCharset);
+                        if ($this->blnExportUTF8Decode || (($strMode == 'exportxls' || $strMode == 'xls') && !$blnCustomXlsExport)) {
+							/*
+							$strName = $this->convertEncoding(
+                                $strName, $GLOBALS['TL_CONFIG']['characterSet'], $this->strExportConvertToCharset
+                            );
+							*/
                         }
 
                         if ($strMode=='csv')
@@ -6003,7 +5995,7 @@ var Stylect = {
                             echo $strExpSep . $strExpEncl . $strName . $strExpEncl;
                             $strExpSep = ";";
                         }
-                        elseif ($strMode=='xls')
+                        elseif ($strMode == 'exportxls' || $strMode == 'xls')
                         {
                             if (!$blnCustomXlsExport)
                             {
@@ -6065,7 +6057,7 @@ var Stylect = {
                     }
                     elseif (in_array($GLOBALS['TL_DCA'][$this->strTable]['fields'][$v]['flag'], array(5, 6, 7, 8, 9, 10)))
                     {
-                        $strVal = ($row[$v] ? date($GLOBALS['TL_CONFIG']['datimFormat'], $row[$v]) : '');
+                        $strVal = ($row[$v] ? date($GLOBALS['TL_CONFIG']['datimFormat'], (int) $row[$v]) : '');
                     }
                     elseif ($GLOBALS['TL_DCA'][$this->strTable]['fields'][$v]['inputType'] == 'checkbox'
                             && !$GLOBALS['TL_DCA'][$this->strTable]['fields'][$v]['eval']['multiple'])
@@ -6103,7 +6095,7 @@ var Stylect = {
                         // take the assigned value instead of the user readable output
                         if ($useFormValues == 1)
                         {
-                            if ((strpos($row[$v], $strSep) === false)
+                            if ((strpos((string)$row[$v], (string)$strSep) === false)
                                 && (is_array($GLOBALS['TL_DCA'][$this->strTable]['fields'][$v]['options']) && count($GLOBALS['TL_DCA'][$this->strTable]['fields'][$v]['options']) > 0))
                             {
                                 // handle grouped options
@@ -6166,13 +6158,13 @@ var Stylect = {
                                 }
                                 else
                                 {
-                                    $strVal = strlen($row[$v]) ? str_replace($strSep, ",\n", $row[$v]) : '';
+                                    $strVal = !empty($row[$v]) ? str_replace((string)$strSep, ",\n", (string)$row[$v]) : '';
                                 }
                             }
                         }
                         else
                         {
-                            $strVal = strlen($row[$v]) ? str_replace($strSep, ",\n", $row[$v]) : '';
+                            $strVal = !empty($row[$v]) ? str_replace($strSep, ",\n", (string) $row[$v]) : '';
                         }
                     }
                     else
@@ -6203,7 +6195,7 @@ var Stylect = {
                         {
                             $args[$k] = $row[$v];
                         }
-                        $strVal = is_null($args[$k]) ? $args[$k] : vsprintf('%s', $args[$k]);
+                        $strVal = !is_array($args[$k]) ? $args[$k] : vsprintf('%s', $args[$k]);
                     }
 
                     if (in_array($v, $this->arrBaseFields) || in_array($v, $this->arrOwnerFields))
@@ -6226,7 +6218,7 @@ var Stylect = {
                         }
                     }
 
-                    if (strlen($strVal))
+                    if (!empty($strVal))
                     {
                         $strVal = \StringUtil::decodeEntities($strVal);
                         $strVal = preg_replace(array('/<br.*\/*>/si'), array("\n"), $strVal);
@@ -6240,12 +6232,12 @@ var Stylect = {
 
                     if ($strMode=='csv')
                     {
-                        $strVal = str_replace('"', '""', $strVal);
+                        $strVal = str_replace('"', '""', (string) $strVal);
                         echo $strExpSep . $strExpEncl . $strVal . $strExpEncl;
 
                         $strExpSep = ";";
                     }
-                    elseif ($strMode=='xls')
+                    elseif ($strMode == 'exportxls' || $strMode == 'xls')
                     {
                         if (!$blnCustomXlsExport)
                         {
@@ -6278,24 +6270,29 @@ var Stylect = {
             }
         }
 
-        if ($strMode=='xls')
+        if ($strMode == 'exportxls' || $strMode == 'xls')
         {
             if (!$blnCustomXlsExport)
             {
                 $filename = 'export_' . $this->strFormKey . '_' . date("Ymd_His") . '.xls';
                 try {
                     $writer = IOFactory::createWriter($spreadsheet, "Xls");
-                    for($i=0; $i<50 || !ob_end_clean(); $i++);
+                    $xls = new Xlsx($spreadsheet);
+                    for($i=0; $i<50 && !ob_end_clean(); $i++);
                     header('Content-type: application/vnd.ms-excel');
-                    header('Content-Disposition: attachment;filename="'.$filename.'"');
-                    $writer->save('php://output');
-                    exit();
+                    header("Content-Transfer-Encoding: Binary");
+                    header(
+                        'Content-Disposition: attachment;filename="' . $this->strFormKey . "_" . date("Ymd_His") . '.xlsx"'
+                    );
+                    header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+                    header('Pragma: public');
+                    header('Expires: 0');
                 }catch (\Exception $e) {
                     //TODO Handle Expeption
                 }
 
-                //TODO CHECK this
-                //$xls->sendfile("export_" . $this->strFormKey . "_" . date("Ymd_His") . ".xls");
+                $xls->save('php://output');
+//                $xls->sendfile("export_" . $this->strFormKey . "_" . date("Ymd_His") . ".xls");
                 exit;
             }
             else
@@ -6320,7 +6317,7 @@ var Stylect = {
 
     public function exportxls()
     {
-        $this->export('xls');
+        $this->export('exportxls');
     }
 
     public function logger($strText, $strFunction, $strCategory)

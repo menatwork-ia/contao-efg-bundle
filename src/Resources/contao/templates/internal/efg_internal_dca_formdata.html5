@@ -189,7 +189,7 @@ $GLOBALS['TL_DCA']['tl_formdata'] = array
 	(
 		'dataContainer'               => 'Formdata',
 		'ctable'                      => array('tl_formdata_details'),
-<?php if (!empty($this->arrForm['key']) && $this->arrForm['key'] != 'feedback'): ?>
+<?php if (!empty($this->arrForm['title']) && $this->arrForm['title'] != 'feedback'): ?>
 		'closed'                      => false,
 <?php else: ?>
 		'closed'                      => true,
@@ -213,7 +213,7 @@ $GLOBALS['TL_DCA']['tl_formdata'] = array
 		'label' => array
 		(
 			'fields'                  => array('date', 'form', 'alias', 'be_notes' <?php foreach ($this->arrFields as $varKey => $varVals): echo ', \'' . $varKey . '\''; endforeach; ?>),
-<?php if (!empty($this->arrForm['key']) && $this->arrForm['key'] != 'feedback'): ?>
+<?php if (!empty($this->arrForm['title']) && $this->arrForm['title'] != 'feedback'): ?>
 			'format'                  => '<div class="fd_wrap">
 	<div class="fd_head">%s<span>[%s]</span><span>%s</span></div>
 	<?php if (count($this->arrFields) > 10): ?><div class="limit_height' . (!$GLOBALS['TL_CONFIG']['doNotCollapse'] ? ' h64' : '') . ' block"><?php endif; ?>
@@ -225,7 +225,7 @@ $GLOBALS['TL_DCA']['tl_formdata'] = array
 			'label_callback'          => array('tl_fd_<?php echo str_replace(array('-','.'), array('_', '_'), $this->strFormKey); ?>','getRowLabel')
 			*/
 <?php endif; ?>
-<?php if (!empty($this->arrForm['key']) && $this->arrForm['key'] == 'feedback'): ?>
+<?php if (!empty($this->arrForm['title']) && $this->arrForm['title'] == 'feedback'): ?>
 			/*
 			'format'                  => '<div class="fd_wrap">
 	<div class="fd_head">%s<span>[%s]</span></div>
@@ -240,7 +240,7 @@ $GLOBALS['TL_DCA']['tl_formdata'] = array
 		),
 		'global_operations' => array
 		(
-<?php if (!empty($this->arrForm['key']) && $this->arrForm['key'] != 'feedback'): ?>
+<?php if (!empty($this->arrForm['title']) && $this->arrForm['title'] != 'feedback'): ?>
 			'import' => array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_formdata']['import'],
@@ -336,10 +336,10 @@ endforeach;	?>
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_formdata']['form'],
 			'inputType'               => 'select',
-			'exclude'                 => <?php echo (!empty($this->arrForm['key']) && $this->arrForm['key'] == 'feedback' ? 'false' : 'true' ); ?>,
-			'search'                  => <?php echo (!empty($this->arrForm['key']) && $this->arrForm['key'] == 'feedback' ? 'true' : 'false' ); ?>,
-			'filter'                  => <?php echo (!empty($this->arrForm['key']) && $this->arrForm['key'] == 'feedback' ? 'true' : 'false' ); ?>,
-			'sorting'                 => <?php echo (!empty($this->arrForm['key']) && $this->arrForm['key'] == 'feedback' ? 'true' : 'false' ); ?>,
+			'exclude'                 => <?php echo (!empty($this->arrForm['title']) && $this->arrForm['title'] == 'feedback' ? 'false' : 'true' ); ?>,
+			'search'                  => <?php echo (!empty($this->arrForm['title']) && $this->arrForm['title'] == 'feedback' ? 'true' : 'false' ); ?>,
+			'filter'                  => <?php echo (!empty($this->arrForm['title']) && $this->arrForm['title'] == 'feedback' ? 'true' : 'false' ); ?>,
+			'sorting'                 => <?php echo (!empty($this->arrForm['title']) && $this->arrForm['title'] == 'feedback' ? 'true' : 'false' ); ?>,
 			'options_callback'        => array('MenAtWork\\EfgBundle\\Contao\\Table\\EfgFormdata', 'getFormsSelect'),
 			'eval'                    => array('chosen' => true, 'tl_class'=> 'w50')
 		),
@@ -469,7 +469,7 @@ endforeach;	?>
 		echo $strSep . "'" . str_replace("'", "\'", \String::decodeEntities($varKey)) . "'"; $strSep = ',';
 	}
 endforeach; ?>),
-<?php if (!empty($this->arrForm['key']) && $this->arrForm['key'] != 'feedback'): ?>
+<?php if (!empty($this->arrForm['title']) && $this->arrForm['title'] != 'feedback'): ?>
 		'formFilterKey'              => 'form',
 		'formFilterValue'            => '<?php echo \str_replace("'", "\'", $this->arrForm['title']); ?>'
 <?php endif; ?>
